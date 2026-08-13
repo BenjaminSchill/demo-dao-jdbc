@@ -10,6 +10,7 @@ import java.util.List;
 
 import db.DB;
 import db.DbException;
+import db.DbIntegrityException;
 import model.dao.DepartmentDao;
 import model.entities.Department;
 
@@ -20,7 +21,6 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 	public DepartmentDaoJDBC(Connection conn) { 
 		this.conn = conn;
 	}
-	
 	
 	@Override
 	public void insert(Department obj) {
@@ -43,6 +43,9 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 				}
 				DB.closeResultSet(rs);
 			}	
+			else {
+				throw new DbException("Unexpected error! No rows affected.");
+			}
 		}
 		catch (SQLException e) { 
 			throw new DbException(e.getMessage());
@@ -58,14 +61,13 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 		try { 
 			st = conn.prepareStatement(
 					"UPDATE department "
-					+ "SET NAME = ? " 
-					+ "WHERE id = ?");
+					+ "SET Name = ? " 
+					+ "WHERE Id = ?");
 			
 			st.setString(1, obj.getName());
 			st.setInt(2, obj.getId());
 			
 			st.executeUpdate();
-
 		}
 		catch (SQLException e) { 
 			throw new DbException(e.getMessage());
@@ -77,8 +79,19 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
-		
+		PreparedStatement st = null; 
+		try { 
+			st = conn.prepareStatement("DELETE FROM department WHERE Id = ?");
+			
+			st.setInt(1, id);
+			st.executeUpdate();
+		}
+		catch (SQLException e) { 
+			throw new DbIntegrityException(e.getMessage());
+		}
+		finally {
+			DB.closeStatement(st);
+		}
 	}
 
 	@Override
@@ -88,7 +101,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 		try { 
 			st = conn.prepareStatement(
 					"SELECT * FROM department "
-					+ "WHERE id = ? ");
+					+ "WHERE Id = ?");
 			
 			st.setInt(1, id);
 			
@@ -97,10 +110,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 			if (rs.next()) { 
 				return instantiateDepartment(rs);
 			}
-			else { 
-				return null;
-			}
-			
+			return null;
 		}
 		catch (SQLException e) { 
 			throw new DbException(e.getMessage());
@@ -113,9 +123,7 @@ public class DepartmentDaoJDBC implements DepartmentDao {
 
 	@Override
 	public List<Department> findAll() {
-		
 		List<Department> list = new ArrayList<>();
-		
 		PreparedStatement st = null;
 		ResultSet rs = null; 
 		try { 

@@ -12,9 +12,9 @@ public class Program2 {
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		
-		DepartmentDao departmentDao = DaoFactory.createDeparmentDao();
+		DepartmentDao departmentDao = DaoFactory.createDepartmentDao();
 		
-		System.out.println("=== TEST 1: Department findById  ===");
+		System.out.println("=== TEST 1: department findById ===");
 		Department department = departmentDao.findById(2);
 		System.out.println(department);
 		
@@ -29,16 +29,18 @@ public class Program2 {
 		departmentDao.insert(dep);
 		System.out.println("Inserted! New id = " + dep.getId());
 		
-		
 		System.out.println("\n=== TEST 4: department update ===");
 		Department dep2 = departmentDao.findById(11);
 		dep2.setName("Human Resources");
 		departmentDao.update(dep2);
-		System.out.println("Updated!");
+		System.out.println("Update completed");
 		
-		
+		System.out.println("\n=== TEST 5: department deleteById ===");
+		System.out.print("Enter id for delete test: ");
+		int id = sc.nextInt();
+		departmentDao.deleteById(id);
+		System.out.println("Delete completed");
 		
 		sc.close();
 	}
-
 }

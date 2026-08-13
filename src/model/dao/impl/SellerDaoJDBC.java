@@ -52,7 +52,7 @@ public class SellerDaoJDBC implements SellerDao{
 				DB.closeResultSet(rs);
 			}
 			else {
-				throw new DbException("Unexpected error! no rows affected!");
+				throw new DbException("Unexpected error! No rows affected!");
 			}
 		}
 		catch (SQLException e) { 
@@ -61,7 +61,6 @@ public class SellerDaoJDBC implements SellerDao{
 		finally { 
 			DB.closeStatement(st);
 		}
-		
 	}
 
 	@Override
@@ -81,7 +80,6 @@ public class SellerDaoJDBC implements SellerDao{
 			st.setInt(6, obj.getId());
 			
 			st.executeUpdate();
-			
 		}
 		catch (SQLException e) { 
 			throw new DbException(e.getMessage());
@@ -107,7 +105,6 @@ public class SellerDaoJDBC implements SellerDao{
 		finally { 
 			DB.closeStatement(st);
 		}
-		
 	}
 
 	@Override
@@ -116,7 +113,7 @@ public class SellerDaoJDBC implements SellerDao{
 		ResultSet rs = null; 
 		try { 
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName "
+					"SELECT seller.*, department.Name as DepName "
 					+ "FROM seller INNER JOIN department " 
 					+ "ON seller.DepartmentId = department.Id " 
 					+ "WHERE seller.Id = ?");
@@ -163,7 +160,7 @@ public class SellerDaoJDBC implements SellerDao{
 		ResultSet rs = null; 
 		try { 
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName "
+					"SELECT seller.*, department.Name as DepName "
 					+ "FROM seller INNER JOIN department "
 					+ "ON seller.DepartmentId = department.Id "
 					+ "ORDER BY Name");
@@ -174,14 +171,11 @@ public class SellerDaoJDBC implements SellerDao{
 			Map<Integer, Department> map = new HashMap<>();
 			
 			while (rs.next()) { 
-				
 				Department dep = map.get(rs.getInt("DepartmentId"));
-				
 				if (dep == null) { 
 					dep = instantiateDepartment(rs);
 					map.put(rs.getInt("DepartmentId"), dep);
 				}
-				
 				Seller obj = instantiateSeller(rs, dep);
 				list.add(obj);
 			}
@@ -202,7 +196,7 @@ public class SellerDaoJDBC implements SellerDao{
 		ResultSet rs = null; 
 		try { 
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName "
+					"SELECT seller.*, department.Name as DepName "
 					+ "FROM seller INNER JOIN department "
 					+ "ON seller.DepartmentId = department.Id "
 					+ "WHERE DepartmentId = ? "
@@ -215,9 +209,7 @@ public class SellerDaoJDBC implements SellerDao{
 			Map<Integer, Department> map = new HashMap<>();
 			
 			while (rs.next()) { 
-				
 				Department dep = map.get(rs.getInt("DepartmentId"));
-				
 				if (dep == null) { 
 					dep = instantiateDepartment(rs);
 					map.put(rs.getInt("DepartmentId"), dep);
